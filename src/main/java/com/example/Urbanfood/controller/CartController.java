@@ -9,6 +9,7 @@ import java.math.BigDecimal;
 
 @RestController
 @RequestMapping("/api/carts")
+@CrossOrigin(origins = "http://localhost:3001")
 public class CartController {
 
     private final CartService cartService;

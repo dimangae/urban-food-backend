@@ -1,6 +1,7 @@
 package com.example.Urbanfood.service;
 
 import com.example.Urbanfood.entity.Orders;
+import com.example.Urbanfood.repository.OrdersRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.ParameterMode;
 import jakarta.persistence.PersistenceContext;
@@ -13,6 +14,12 @@ import java.util.List;
 
 @Service
 public class OrdersService {
+
+    private final OrdersRepository ordersRepository;
+
+    public OrdersService(OrdersRepository ordersRepository) {
+        this.ordersRepository = ordersRepository;
+    }
 
     @PersistenceContext
     private EntityManager entityManager1;
@@ -108,5 +115,10 @@ public class OrdersService {
         query.registerStoredProcedureParameter("pa_order_id", Long.class, ParameterMode.IN);
         query.setParameter("pa_order_id", orderId);
         query.execute();
+    }
+
+    @Transactional
+    public List<Orders> getAllOrders() {
+        return ordersRepository.findAll();
     }
 }

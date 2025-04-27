@@ -31,17 +31,21 @@ public class Product {
     @Column(name = "Stock_Quantity")
     private Integer stockQuantity;
 
+    @Column(name = "Image_Url")
+    private String imageUrl;
+
     // Default constructor required by JPA
     public Product() { }
 
     // Convenience constructor
-    public Product(Long supplierId, String name, String description, String category, BigDecimal price, Integer stockQuantity) {
+    public Product(Long supplierId, String name, String description, String category, BigDecimal price, Integer stockQuantity, String imageUrl) {
         this.supplierId = supplierId;
         this.name = name;
         this.description = description;
         this.category = category;
         this.price = price;
         this.stockQuantity = stockQuantity;
+        this.imageUrl = imageUrl;
     }
 
     // Getters and setters
@@ -52,6 +56,7 @@ public class Product {
     public String getCategory() { return category; }
     public BigDecimal getPrice() { return price; }
     public Integer getStockQuantity() { return stockQuantity; }
+    public String getImageUrl() { return imageUrl; }
 
     public void setId(Long id) { this.id = id; }
     public void setSupplierId(Long supplierId) { this.supplierId = supplierId; }
@@ -60,4 +65,5 @@ public class Product {
     public void setCategory(String category) { this.category = category; }
     public void setPrice(BigDecimal price) { this.price = price; }
     public void setStockQuantity(Integer stockQuantity) { this.stockQuantity = stockQuantity; }
+    public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
 }

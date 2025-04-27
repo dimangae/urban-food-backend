@@ -34,7 +34,7 @@ public class ProductService {
 
     @Transactional
     public Long insertProduct(Long supplierId, String name, String description,
-                              String category, BigDecimal price, Integer stockQuantity) {
+                              String category, BigDecimal price, Integer stockQuantity, String imageUrl) {
         StoredProcedureQuery query =
                 entityManager.createStoredProcedureQuery("INSERT_PRODUCT");
 
@@ -44,6 +44,7 @@ public class ProductService {
         query.registerStoredProcedureParameter("pa_category", String.class, ParameterMode.IN);
         query.registerStoredProcedureParameter("pa_price", BigDecimal.class, ParameterMode.IN);
         query.registerStoredProcedureParameter("pa_stock_quantity", Integer.class, ParameterMode.IN);
+        query.registerStoredProcedureParameter("pa_image_url", String.class, ParameterMode.IN);
         query.registerStoredProcedureParameter("ou_prod_id", Long.class, ParameterMode.OUT);
 
         query.setParameter("pa_supplier_id", supplierId);
@@ -52,6 +53,7 @@ public class ProductService {
         query.setParameter("pa_category", category);
         query.setParameter("pa_price", price);
         query.setParameter("pa_stock_quantity", stockQuantity);
+        query.setParameter("pa_image_url", imageUrl);
 
         query.execute();
         return (Long) query.getOutputParameterValue("ou_prod_id");
@@ -59,7 +61,7 @@ public class ProductService {
 
     @Transactional
     public void updateProduct(Long id, Long supplierId, String name, String description,
-                              String category, BigDecimal price, Integer stockQuantity) {
+                              String category, BigDecimal price, Integer stockQuantity, String imageUrl) {
         StoredProcedureQuery query =
                 entityManager.createStoredProcedureQuery("UPDATE_PRODUCT");
 
@@ -70,6 +72,7 @@ public class ProductService {
         query.registerStoredProcedureParameter("pa_category", String.class, ParameterMode.IN);
         query.registerStoredProcedureParameter("pa_price", BigDecimal.class, ParameterMode.IN);
         query.registerStoredProcedureParameter("pa_stock_quantity", Integer.class, ParameterMode.IN);
+        query.registerStoredProcedureParameter("pa_image_url", String.class, ParameterMode.IN);
 
         query.setParameter("pa_id", id);
         query.setParameter("pa_supplier_id", supplierId);
@@ -78,6 +81,7 @@ public class ProductService {
         query.setParameter("pa_category", category);
         query.setParameter("pa_price", price);
         query.setParameter("pa_stock_quantity", stockQuantity);
+        query.setParameter("pa_image_url", imageUrl);
 
         query.execute();
     }
@@ -90,5 +94,19 @@ public class ProductService {
         query.registerStoredProcedureParameter("pa_id", Long.class, ParameterMode.IN);
         query.setParameter("pa_id", id);
         query.execute();
+    }
+
+    @Transactional
+    public List<Product> getAllProducts() {
+        StoredProcedureQuery query =
+                entityManager.createStoredProcedureQuery("GETALLPRODUCTS", Product.class);
+
+        query.registerStoredProcedureParameter("cur", void.class, ParameterMode.REF_CURSOR);
+
+        query.execute();
+
+        @SuppressWarnings("unchecked")
+        List<Product> result = query.getResultList();
+        return result;
     }
 }

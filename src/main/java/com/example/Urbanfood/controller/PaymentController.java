@@ -11,6 +11,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:3001")
 @RequestMapping("/api/payments")
 public class PaymentController {
 

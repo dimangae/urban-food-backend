@@ -2,14 +2,16 @@ package com.example.Urbanfood.controller;
 
 import com.example.Urbanfood.entity.Customer;
 import com.example.Urbanfood.service.CustomerService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:3001")
+@CrossOrigin(origins = {"http://localhost:3000", "http://localhost:3001"})
 @RequestMapping("/api/customers")
 public class CustomerController {
 
@@ -31,12 +33,22 @@ public class CustomerController {
 
     // POST to create a new customer
     @PostMapping
-    public ResponseEntity<Long> insertCustomer(@RequestParam String name,
+    public ResponseEntity<?> insertCustomer(@RequestParam String name,
                                                @RequestParam String email,
                                                @RequestParam Long contact,
-                                               @RequestParam String address) {
-        Long newId = customerService.insertCustomer(name, email, contact, address);
-        return ResponseEntity.ok(newId);
+                                               @RequestParam String address,
+                                               @RequestParam String nic) {
+        try {
+            Long newId = customerService.insertCustomer(name, email, contact, address, nic);
+            return ResponseEntity.ok(newId);
+        } catch (RuntimeException ex) {
+            Map<String, Object> body = new HashMap<>();
+            body.put("timestamp", LocalDateTime.now());
+            body.put("error", ex.getMessage());
+            body.put("status", HttpStatus.BAD_REQUEST.value());
+
+            return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+        }
     }
 
     // PUT to update an existing customer
@@ -45,11 +57,12 @@ public class CustomerController {
                                                @RequestParam String name,
                                                @RequestParam String email,
                                                @RequestParam Long contact,
-                                               @RequestParam String address) {
-        //customerService.updateCustomer(id, name, email, contact, address);
+                                               @RequestParam String address,
+                                               @RequestParam String nic) {
+        //customerService.updateCustomer(id, name, email, contact, address, nic);
         //return ResponseEntity.ok().build();s
 
-        Customer updatedCustomer = customerService.updateCustomer(id, name, email, contact, address);
+        Customer updatedCustomer = customerService.updateCustomer(id, name, email, contact, address, nic);
 
         Map<String, Object> response = new HashMap<>();
         response.put("message", "Customer updated successfully");
@@ -63,5 +76,14 @@ public class CustomerController {
     public ResponseEntity<Void> deleteCustomer(@PathVariable Long id) {
         customerService.deleteCustomer(id);
         return ResponseEntity.ok().build();
+    }
+
+    // GET a customer by nic
+    @GetMapping("/findByNic")
+    public ResponseEntity<Customer> getCustomerIdByNic(@RequestParam String nic) {
+        Customer customer = customerService.getCustomerIdByNic(nic);
+        return (customer != null)
+                ? ResponseEntity.ok(customer)
+                : ResponseEntity.notFound().build();
     }
 }

@@ -8,9 +8,10 @@ import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:3001")
+@CrossOrigin(origins = {"http://localhost:3000", "http://localhost:3001"})
 @RequestMapping("/api/orders")
 public class OrdersController {
 
@@ -91,5 +92,12 @@ public class OrdersController {
     public ResponseEntity<Void> deleteOrder(@PathVariable Long id) {
         ordersService.deleteOrder(id);
         return ResponseEntity.ok().build();
+    }
+
+    // GET all orders
+    @GetMapping
+    public ResponseEntity<List<Orders>> getAllOrders() {
+        List<Orders> orders = ordersService.getAllOrders();
+        return ResponseEntity.ok(orders);
     }
 }

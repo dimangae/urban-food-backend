@@ -5,9 +5,10 @@ import com.example.Urbanfood.service.ProductService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.math.BigDecimal;
+import java.util.List;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:3001")
+@CrossOrigin(origins = {"http://localhost:3000", "http://localhost:3001"})
 @RequestMapping("/api/products")
 public class ProductController {
 
@@ -25,6 +26,14 @@ public class ProductController {
                 ? ResponseEntity.ok(product)
                 : ResponseEntity.notFound().build();
     }
+    //GET all products
+    @GetMapping
+    public ResponseEntity<List<Product>> getAllProducts() {
+        List<Product> products = productService.getAllProducts();
+        return products.isEmpty()
+                ? ResponseEntity.noContent().build()
+                : ResponseEntity.ok(products);
+    }
 
     // POST to insert a new product
     @PostMapping
@@ -34,8 +43,9 @@ public class ProductController {
             @RequestParam(required = false) String description,
             @RequestParam(required = false) String category,
             @RequestParam BigDecimal price,
-            @RequestParam Integer stockQuantity) {
-        Long newId = productService.insertProduct(supplierId, name, description, category, price, stockQuantity);
+            @RequestParam Integer stockQuantity,
+            @RequestParam String imageUrl) {
+        Long newId = productService.insertProduct(supplierId, name, description, category, price, stockQuantity, imageUrl);
         return ResponseEntity.ok(newId);
     }
 
@@ -48,8 +58,9 @@ public class ProductController {
             @RequestParam(required = false) String description,
             @RequestParam(required = false) String category,
             @RequestParam BigDecimal price,
-            @RequestParam Integer stockQuantity) {
-        productService.updateProduct(id, supplierId, name, description, category, price, stockQuantity);
+            @RequestParam Integer stockQuantity,
+            @RequestParam String imageUrl) {
+        productService.updateProduct(id, supplierId, name, description, category, price, stockQuantity, imageUrl);
         return ResponseEntity.ok().build();
     }
 
